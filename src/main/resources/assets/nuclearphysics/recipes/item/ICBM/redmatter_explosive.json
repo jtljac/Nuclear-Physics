@@ -1,0 +1,22 @@
+{
+  "result": {
+    "explosive": "icbmclassic:redmatter",
+    "count": 1
+  },
+  "pattern": [
+    "nnn",
+    "nrn",
+    "nnn"
+  ],
+  "type": "icbmclassic:explosive",
+  "key": {
+    "r": {
+      "type" : "icbmclassic:explosive",
+      "explosive": "icbmclassic:antimatter"
+    },
+    "n": {
+      "type": "forge:ore_dict",
+      "ore": "cellDarkmatter"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "result": {
+    "explosive": "icbmclassic:antimatter",
+    "count": 1
+  },
+  "pattern": [
+    "nnn",
+    "nrn",
+    "nnn"
+  ],
+  "type": "icbmclassic:explosive",
+  "key": {
+    "r": {
+      "type" : "icbmclassic:explosive",
+      "explosive": "icbmclassic:nuclear"
+    },
+    "n": {
+      "item": "nuclearphysics:antimatter_cell",
+      "data": 0
+    }
+  }
+}
