@@ -1,10 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
+        maven { url = "https://files.minecraftforge.net/maven" }
         maven {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
@@ -32,7 +29,11 @@ idea {
 apply plugin: "net.minecraftforge.gradle.forge"
 
 repositories {
-
+    maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
 }
 
 // Define properties file
@@ -61,7 +62,7 @@ minecraft {
 }
 
 dependencies {
-
+    compile "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}"
 }
 
 processResources {
