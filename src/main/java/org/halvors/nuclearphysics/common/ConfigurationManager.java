@@ -68,7 +68,7 @@ public class ConfigurationManager {
 
         General.uraniumPerChunk = configuration.get(Configuration.CATEGORY_GENERAL, "uraniumPerChunk", 9).getInt();
 
-        General.antimatterParticleDensity = configuration.get(Configuration.CATEGORY_GENERAL, "antimatterParticleDensity", 1.0).getInt();
+        General.antimatterParticleDensity = configuration.get(Configuration.CATEGORY_GENERAL, "antimatterParticleDensity", 1).getInt();
         General.fulminationOutputMultiplier = configuration.get(Configuration.CATEGORY_GENERAL, "fulminationOutputMultiplier", 1.0).getDouble();
         General.turbineOutputMultiplier = configuration.get(Configuration.CATEGORY_GENERAL, "turbineOutputMultiplier", 1.0).getDouble();
         General.steamOutputMultiplier = configuration.get(Configuration.CATEGORY_GENERAL, "steamOutputMultiplier", 1.0).getDouble();
