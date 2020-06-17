@@ -169,7 +169,7 @@ public class ConfigurationManager {
         objects.add(General.allowGeneratedQuantumAssemblerRecipes);
 
         // TODO: Testing new options.
-        objects.add(Energy.particleAcceleratorEnergyPerTick = dataStream.readInt());
+        objects.add(Energy.particleAcceleratorEnergyPerTick);
 
         PacketHandler.writeObjects(objects, dataStream);
     }
