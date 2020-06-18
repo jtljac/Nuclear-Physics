@@ -16,6 +16,8 @@ public class LiquidTank extends FluidTank {
     public void handlePacketData(final ByteBuf dataStream) {
         if (dataStream.readBoolean()) {
             setFluid(FluidStack.loadFluidStackFromNBT(ByteBufUtils.readTag(dataStream)));
+        } else {
+            setFluid(null);
         }
     }
 

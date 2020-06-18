@@ -251,7 +251,6 @@ public class TileChemicalExtractor extends TileProcess {
             if (fluidStack != null && fluidStack.amount >= 1 && fluidStack.isFluidEqual(ModFluids.fluidStackWater)) {
                 if (tankOutput.fillInternal(new FluidStack(ModFluids.deuterium, EXTRACT_SPEED), true) >= EXTRACT_SPEED) {
                     tankInput.drainInternal(waterUsage * EXTRACT_SPEED, true);
-
                     return true;
                 }
             }
