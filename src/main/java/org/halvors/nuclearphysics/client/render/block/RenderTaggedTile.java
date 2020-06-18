@@ -10,10 +10,13 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.halvors.nuclearphysics.api.tile.ITagRender;
+import org.halvors.nuclearphysics.api.tile.TagRenderStruct;
 import org.halvors.nuclearphysics.client.utility.RenderUtility;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
 @SideOnly(Side.CLIENT)
@@ -23,7 +26,7 @@ public abstract class RenderTaggedTile<T extends TileEntity> extends RenderTile<
         final BlockPos pos = tile.getPos();
 
         if (tile instanceof ITagRender && getPlayer().getDistance(pos.getX(), pos.getY(), pos.getZ()) <= RenderLiving.NAME_TAG_RANGE) {
-            final HashMap<String, Integer> tags = new HashMap<>();
+            final List<TagRenderStruct> tags = new ArrayList<>();
             final float height = ((ITagRender) tile).addInformation(tags, getPlayer());
             final EntityPlayer player = Minecraft.getMinecraft().player;
 
@@ -42,17 +45,8 @@ public abstract class RenderTaggedTile<T extends TileEntity> extends RenderTile<
                     }
 
                     if (isLooking) {
-                        final Iterator<Entry<String, Integer>> it = tags.entrySet().iterator();
-                        int i = 0;
-
-                        while (it.hasNext()) {
-                            final Entry<String, Integer> entry = it.next();
-
-                            if (entry.getKey() != null) {
-                                RenderUtility.renderFloatingText(entry.getKey(), new BlockPos(x, y, z).add(0.5, i * 0.25 + height, 0.5), entry.getValue());
-                            }
-
-                            i++;
+                        for (int i = 0; i < tags.size(); i++) {
+                            RenderUtility.renderFloatingText(tags.get(i).text, x + 0.5, y + 1 + i * 0.25, z+ 0.5, tags.get(i).colour);
                         }
                     }
                 }

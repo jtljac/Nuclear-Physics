@@ -3,16 +3,18 @@ package org.halvors.nuclearphysics.api.tile;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Applied to TileEntities to render a tag above them.
  */
+
 public interface ITagRender {
     /** Gets the list of strings to render above the object.
      * @param player The player this list will display for
-     * @param map HashMap of strings followed by there color Example {"Hello World",0x88FF88}
+     * @param list A List of structs containing the text and colour in order from the bottom
      * @return The HEIGHT in which the render should happen.
      */
-    float addInformation(HashMap<String, Integer> map, EntityPlayer player);
+    float addInformation(List<TagRenderStruct> list, EntityPlayer player);
 }
 
