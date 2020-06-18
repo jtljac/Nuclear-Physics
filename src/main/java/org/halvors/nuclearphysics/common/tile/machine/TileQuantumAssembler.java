@@ -2,7 +2,10 @@ package org.halvors.nuclearphysics.common.tile.machine;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.halvors.nuclearphysics.api.recipe.QuantumAssemblerRecipes;
 import org.halvors.nuclearphysics.common.NuclearPhysics;
@@ -14,6 +17,8 @@ import org.halvors.nuclearphysics.common.tile.TileInventoryMachine;
 import org.halvors.nuclearphysics.common.utility.InventoryUtility;
 import org.halvors.nuclearphysics.common.utility.OreDictionaryHelper;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class TileQuantumAssembler extends TileInventoryMachine {
@@ -40,9 +45,8 @@ public class TileQuantumAssembler extends TileInventoryMachine {
             }
 
             private boolean isItemValidForSlot(final int slot, final ItemStack itemStack) {
-                switch (slot) {
-                    case 6:
-                        return QuantumAssemblerRecipes.hasRecipe(itemStack);
+                if (slot == 6) {
+                    return QuantumAssemblerRecipes.hasRecipe(itemStack);
                 }
 
                 return OreDictionaryHelper.isDarkmatterCell(itemStack);
@@ -57,6 +61,12 @@ public class TileQuantumAssembler extends TileInventoryMachine {
                 return super.insertItem(slot, stack, simulate);
             }
         };
+    }
+
+    @Override
+    public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return false;
+        else return super.hasCapability(capability, facing);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
