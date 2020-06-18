@@ -2,10 +2,12 @@ package org.halvors.nuclearphysics.common.tile.machine;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.halvors.nuclearphysics.api.recipe.QuantumAssemblerRecipes;
 import org.halvors.nuclearphysics.common.NuclearPhysics;
@@ -14,6 +16,7 @@ import org.halvors.nuclearphysics.common.capabilities.energy.EnergyStorage;
 import org.halvors.nuclearphysics.common.init.ModSoundEvents;
 import org.halvors.nuclearphysics.common.network.packet.PacketTileEntity;
 import org.halvors.nuclearphysics.common.tile.TileInventoryMachine;
+import org.halvors.nuclearphysics.common.tile.TileMachine;
 import org.halvors.nuclearphysics.common.utility.InventoryUtility;
 import org.halvors.nuclearphysics.common.utility.OreDictionaryHelper;
 
@@ -21,9 +24,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class TileQuantumAssembler extends TileInventoryMachine {
+public class TileQuantumAssembler extends TileMachine {
     private static final int ENERGY_PER_TICK = 2048000;
     public static final int TICKS_REQUIRED = 180 * 20;
+
+    // Inventory
+    private static final String NBT_SLOTS = "slots";
+    protected IItemHandlerModifiable inventory;
 
     // Used for rendering.
     private EntityItem entityItem = null;
@@ -63,10 +70,34 @@ public class TileQuantumAssembler extends TileInventoryMachine {
         };
     }
 
+    public IItemHandlerModifiable getInventory() {
+        return inventory;
+    }
+
+    // Capablilities
     @Override
     public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return false;
         else return super.hasCapability(capability, facing);
+    }
+
+
+    // NBT Tags
+    @Override
+    public void readFromNBT(final NBTTagCompound tag) {
+        super.readFromNBT(tag);
+
+        InventoryUtility.readFromNBT(tag, inventory);
+        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventory, null, tag.getTag(NBT_SLOTS));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(final NBTTagCompound tag) {
+        super.writeToNBT(tag);
+
+        tag.setTag(NBT_SLOTS, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventory, null));
+
+        return tag;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
