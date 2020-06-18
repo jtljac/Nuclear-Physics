@@ -6,10 +6,10 @@ import net.minecraft.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuantumAssemblerRecipes {
+public class QuantumAssemblerBlacklist {
     private static final List<ItemStack> RECIPES = new ArrayList<>();
 
-    public static boolean hasRecipe(ItemStack itemStack) {
+    public static boolean isBlacklisted(ItemStack itemStack) {
         for (ItemStack output : RECIPES) {
             if (output.isItemEqual(itemStack)) {
                 return true;
@@ -19,7 +19,7 @@ public class QuantumAssemblerRecipes {
         return false;
     }
 
-    public static void addRecipe(ItemStack itemStack) {
+    public static void addItemToBlacklist(ItemStack itemStack) {
         if (!itemStack.isEmpty()) {
             if (itemStack.isStackable()) {
                 RECIPES.add(itemStack);

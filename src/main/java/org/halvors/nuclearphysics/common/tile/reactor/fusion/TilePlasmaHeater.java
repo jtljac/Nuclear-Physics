@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.halvors.nuclearphysics.api.tile.ITagRender;
+import org.halvors.nuclearphysics.api.tile.TagRenderStruct;
 import org.halvors.nuclearphysics.common.NuclearPhysics;
 import org.halvors.nuclearphysics.common.block.states.BlockStateMachine.EnumMachine;
 import org.halvors.nuclearphysics.common.capabilities.energy.EnergyStorage;
@@ -220,21 +221,21 @@ public class TilePlasmaHeater extends TileMachine implements IFluidHandler, ITag
 
     @Override
     @SideOnly(Side.CLIENT)
-    public float addInformation(final HashMap<String, Integer> map, final EntityPlayer player) {
+    public float addInformation(final List<TagRenderStruct> list, final EntityPlayer player) {
         if (energyStorage.getEnergyStored() > 0) {
-            map.put(LanguageUtility.transelate("tooltip.energy") + ": " + UnitDisplay.getEnergyDisplay(energyStorage.getEnergyStored()), EnumColor.WHITE.getHex());
-        }
-
-        if (tankInputDeuterium.getFluidAmount() > 0) {
-            map.put(LanguageUtility.transelate("fluid.deuterium") + ": " + tankInputDeuterium.getFluidAmount() + " L", EnumColor.WHITE.getHex());
-        }
-
-        if (tankInputTritium.getFluidAmount() > 0) {
-            map.put(LanguageUtility.transelate("fluid.tritium") + ": " + tankInputTritium.getFluidAmount() + " L", EnumColor.WHITE.getHex());
+            list.add(new TagRenderStruct(LanguageUtility.transelate("tooltip.energy") + ": " + UnitDisplay.getEnergyDisplay(energyStorage.getEnergyStored()), EnumColor.WHITE.getHex()));
         }
 
         if (tankOutput.getFluidAmount() > 0) {
-            map.put(LanguageUtility.transelate("fluid.plasma") + ": " + tankOutput.getFluidAmount() + " L", EnumColor.WHITE.getHex());
+            list.add(new TagRenderStruct(LanguageUtility.transelate("fluid.plasma") + ": " + tankOutput.getFluidAmount() + " L", EnumColor.WHITE.getHex()));
+        }
+
+        if (tankInputTritium.getFluidAmount() > 0) {
+            list.add(new TagRenderStruct(LanguageUtility.transelate("fluid.tritium") + ": " + tankInputTritium.getFluidAmount() + " L", EnumColor.WHITE.getHex()));
+        }
+
+        if (tankInputDeuterium.getFluidAmount() > 0) {
+            list.add(new TagRenderStruct(LanguageUtility.transelate("fluid.deuterium") + ": " + tankInputDeuterium.getFluidAmount() + " L", EnumColor.WHITE.getHex()));
         }
 
         return 1.5F;

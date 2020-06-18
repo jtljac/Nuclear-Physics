@@ -9,13 +9,12 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
-import org.halvors.nuclearphysics.api.recipe.QuantumAssemblerRecipes;
+import org.halvors.nuclearphysics.api.recipe.QuantumAssemblerBlacklist;
 import org.halvors.nuclearphysics.common.NuclearPhysics;
 import org.halvors.nuclearphysics.common.block.states.BlockStateMachine.EnumMachine;
 import org.halvors.nuclearphysics.common.capabilities.energy.EnergyStorage;
 import org.halvors.nuclearphysics.common.init.ModSoundEvents;
 import org.halvors.nuclearphysics.common.network.packet.PacketTileEntity;
-import org.halvors.nuclearphysics.common.tile.TileInventoryMachine;
 import org.halvors.nuclearphysics.common.tile.TileMachine;
 import org.halvors.nuclearphysics.common.utility.InventoryUtility;
 import org.halvors.nuclearphysics.common.utility.OreDictionaryHelper;
@@ -53,7 +52,7 @@ public class TileQuantumAssembler extends TileMachine {
 
             private boolean isItemValidForSlot(final int slot, final ItemStack itemStack) {
                 if (slot == 6) {
-                    return QuantumAssemblerRecipes.hasRecipe(itemStack);
+                    return itemStack.isStackable() && !QuantumAssemblerBlacklist.isBlacklisted(itemStack);
                 }
 
                 return OreDictionaryHelper.isDarkmatterCell(itemStack);
@@ -154,7 +153,7 @@ public class TileQuantumAssembler extends TileMachine {
         final ItemStack itemStack = inventory.getStackInSlot(6);
 
         if (!itemStack.isEmpty()) {
-            if (QuantumAssemblerRecipes.hasRecipe(itemStack)) {
+            if (itemStack.isStackable() && !QuantumAssemblerBlacklist.isBlacklisted(itemStack)) {
                 for (int i = 0; i <= 5; i++) {
                     final ItemStack itemStackInSlot = inventory.getStackInSlot(i);
 
