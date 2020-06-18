@@ -14,9 +14,11 @@ import org.halvors.nuclearphysics.common.tile.TileInventoryMachine;
 import org.halvors.nuclearphysics.common.utility.InventoryUtility;
 import org.halvors.nuclearphysics.common.utility.OreDictionaryHelper;
 
+import java.util.Random;
+
 public class TileQuantumAssembler extends TileInventoryMachine {
     private static final int ENERGY_PER_TICK = 2048000;
-    public static final int TICKS_REQUIRED = 120 * 20;
+    public static final int TICKS_REQUIRED = 180 * 20;
 
     // Used for rendering.
     private EntityItem entityItem = null;
@@ -67,6 +69,7 @@ public class TileQuantumAssembler extends TileInventoryMachine {
             if (canFunction() && canProcess() && energyStorage.extractEnergy(ENERGY_PER_TICK, true) >= ENERGY_PER_TICK) {
                 if (operatingTicks < TICKS_REQUIRED) {
                     operatingTicks++;
+                    randomEntropy();
                 } else {
                     process();
                     reset();
@@ -103,6 +106,7 @@ public class TileQuantumAssembler extends TileInventoryMachine {
         }
     }
 
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public boolean canProcess() {
@@ -130,7 +134,7 @@ public class TileQuantumAssembler extends TileInventoryMachine {
         if (canProcess()) {
             for (int slot = 0; slot <= 5; slot++) {
                 if (!inventory.getStackInSlot(slot).isEmpty()) {
-                    InventoryUtility.decrStackSize(inventory, 1);
+                    InventoryUtility.decrStackSize(inventory, slot);
                 }
             }
 
@@ -139,6 +143,16 @@ public class TileQuantumAssembler extends TileInventoryMachine {
             if (!itemStack.isEmpty()) {
                 itemStack.setCount(itemStack.getCount() + 1);
             }
+        }
+    }
+
+    private void randomEntropy() {
+        if (operatingTicks % 500 == 0){
+            Random randomat = new Random();
+            if (randomat.nextFloat() < 0.1f){
+                InventoryUtility.decrStackSize(inventory, randomat.nextInt(6));
+            }
+
         }
     }
 
