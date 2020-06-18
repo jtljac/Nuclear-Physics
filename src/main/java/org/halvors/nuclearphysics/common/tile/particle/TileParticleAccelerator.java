@@ -7,8 +7,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.halvors.nuclearphysics.api.tile.IElectromagnet;
 import org.halvors.nuclearphysics.common.ConfigurationManager.Energy;
@@ -21,15 +25,25 @@ import org.halvors.nuclearphysics.common.init.ModItems;
 import org.halvors.nuclearphysics.common.init.ModSoundEvents;
 import org.halvors.nuclearphysics.common.item.particle.ItemAntimatterCell;
 import org.halvors.nuclearphysics.common.network.packet.PacketTileEntity;
-import org.halvors.nuclearphysics.common.tile.TileInventoryMachine;
+import org.halvors.nuclearphysics.common.tile.TileMachine;
 import org.halvors.nuclearphysics.common.utility.InventoryUtility;
 import org.halvors.nuclearphysics.common.utility.OreDictionaryHelper;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
-public class TileParticleAccelerator extends TileInventoryMachine implements IElectromagnet {
+public class TileParticleAccelerator extends TileMachine implements IElectromagnet {
+    // NBT
+    // Slots
+    private static final String NBT_SLOT_INPUT_MATTER = "slotInputMatter";
+    private static final String NBT_SLOT_INPUT_CELLS = "slotInputCells";
+    private static final String NBT_SLOT_OUTPUT = "slotOutput";
+    // Other
     private static final String NBT_TOTAL_ENERGY_CONSUMED = "totalEnergyConsumed";
     private static final String NBT_ANTIMATTER_COUNT = "antimatterCount";
+
+
     private static final int ENERGY_PER_TICK = Energy.particleAcceleratorEnergyPerTick; // 19000
     public static final float ANTIMATTER_CREATION_SPEED = 0.9F; // Speed by which a particle will turn into anitmatter.
 
@@ -46,6 +60,11 @@ public class TileParticleAccelerator extends TileInventoryMachine implements IEl
     private double velocity = 0; // Synced
     private int lastSpawnTick = 0;
 
+    // Inventory
+    private IItemHandlerModifiable inventoryInMatter;
+    private IItemHandlerModifiable inventoryInCells;
+    private IItemHandlerModifiable inventoryOut;
+
     public TileParticleAccelerator() {
         this(EnumMachine.PARTICLE_ACCELERATOR);
     }
@@ -54,34 +73,26 @@ public class TileParticleAccelerator extends TileInventoryMachine implements IEl
         super(type);
 
         energyStorage = new EnergyStorage(ENERGY_PER_TICK * 40, ENERGY_PER_TICK);
-        inventory = new ItemStackHandler(4) {
+        createInventories();
+    }
+
+    private void createInventories() {
+        createInputCells();
+        createInputMatter();
+        createOutput();
+    }
+
+    private void createInputCells() {
+        inventoryInCells = new ItemStackHandler(1) {
             @Override
             protected void onContentsChanged(final int slot) {
                 super.onContentsChanged(slot);
                 markDirty();
             }
 
-            public boolean isItemValidForSlot(final int slot, final ItemStack itemStack) {
-                switch (slot) {
-                    case 0:
-                        return true;
-
-                    case 1:
-                        return OreDictionaryHelper.isEmptyCell(itemStack);
-
-                    case 2:
-                        return itemStack.getItem() instanceof ItemAntimatterCell;
-
-                    case 3:
-                        return OreDictionaryHelper.isDarkmatterCell(itemStack);
-                }
-
-                return false;
-            }
-
             @Override
             public ItemStack insertItem(final int slot, final ItemStack stack, final boolean simulate) {
-                if (!isItemValidForSlot(slot, stack)) {
+                if (!OreDictionaryHelper.isEmptyCell(stack)) {
                     return stack;
                 }
 
@@ -90,9 +101,83 @@ public class TileParticleAccelerator extends TileInventoryMachine implements IEl
         };
     }
 
+    private void createInputMatter() {
+        inventoryInMatter = new ItemStackHandler(1) {
+            @Override
+            protected void onContentsChanged(final int slot) {
+                super.onContentsChanged(slot);
+                markDirty();
+            }
+        };
+    }
+
+    private void createOutput() {
+        inventoryOut = new ItemStackHandler(2) {
+            @Override
+            protected void onContentsChanged(final int slot) {
+                super.onContentsChanged(slot);
+                markDirty();
+            }
+
+            @Override
+            public ItemStack insertItem(final int slot, final ItemStack stack, final boolean simulate) {
+                return stack;
+            }
+        };
+    }
+
+    public IItemHandlerModifiable getInventoryInCells(){
+        return inventoryInCells;
+    }
+
+    public IItemHandlerModifiable getInventoryInMatter(){
+        return inventoryInMatter;
+    }
+
+    public IItemHandlerModifiable getInventoryOut(){
+        return inventoryOut;
+    }
+
+    @Override
+    public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final EnumFacing facing) {
+        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    @Nonnull
+    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (facing != null) {
+                switch (facing) {
+                    case UP:
+                        return (T) inventoryInMatter;
+                    case EAST:
+                    case WEST:
+                    case NORTH:
+                    case SOUTH:
+                        return (T) inventoryInCells;
+                    case DOWN:
+                        return (T) inventoryOut;
+                }
+            }
+        }
+
+        return super.getCapability(capability, facing);
+    }
+
     @Override
     public void readFromNBT(final NBTTagCompound tag) {
         super.readFromNBT(tag);
+
+        InventoryUtility.readFromNBT(tag, inventoryInCells);
+        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventoryInCells, null, tag.getTag(NBT_SLOT_INPUT_CELLS));
+
+        InventoryUtility.readFromNBT(tag, inventoryInMatter);
+        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventoryInMatter, null, tag.getTag(NBT_SLOT_INPUT_MATTER));
+
+        InventoryUtility.readFromNBT(tag, inventoryOut);
+        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventoryOut, null, tag.getTag(NBT_SLOT_OUTPUT));
 
         totalEnergyConsumed = tag.getInteger(NBT_TOTAL_ENERGY_CONSUMED);
         antimatterCount = tag.getInteger(NBT_ANTIMATTER_COUNT);
@@ -101,6 +186,10 @@ public class TileParticleAccelerator extends TileInventoryMachine implements IEl
     @Override
     public NBTTagCompound writeToNBT(final NBTTagCompound tag) {
         super.writeToNBT(tag);
+
+        tag.setTag(NBT_SLOT_INPUT_CELLS, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventoryInCells, null));
+        tag.setTag(NBT_SLOT_INPUT_MATTER, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventoryInMatter, null));
+        tag.setTag(NBT_SLOT_OUTPUT, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventoryOut, null));
 
         tag.setInteger(NBT_TOTAL_ENERGY_CONSUMED, totalEnergyConsumed);
         tag.setInteger(NBT_ANTIMATTER_COUNT, antimatterCount);
@@ -119,13 +208,12 @@ public class TileParticleAccelerator extends TileInventoryMachine implements IEl
 
             outputAntimatter();
 
-            // Check if redstone signal is currently being applied.
-            final ItemStack itemStack = inventory.getStackInSlot(0);
+            final ItemStack matter = inventoryInMatter.getStackInSlot(0);
 
             if (canFunction() && energyStorage.extractEnergy(ENERGY_PER_TICK, true) >= ENERGY_PER_TICK) {
                 if (entityParticle == null) {
                     // Creates an accelerated particle if one needs to exist (on world load for example or player login).
-                    if (!itemStack.isEmpty() && lastSpawnTick >= 40) {
+                    if (!matter.isEmpty() && lastSpawnTick >= 40) {
                         final BlockPos spawnAcceleratedParticlePos = pos.offset(facing.getOpposite());
 
                         // Only render the particle if container within the proper environment for it.
@@ -139,7 +227,7 @@ public class TileParticleAccelerator extends TileInventoryMachine implements IEl
                             calculateParticleDensity();
 
                             // Decrease particle we want to collide.
-                            InventoryUtility.decrStackSize(inventory, 0);
+                            InventoryUtility.decrStackSize(inventoryInMatter, 0);
                             lastSpawnTick = 0;
                         }
                     }
@@ -147,8 +235,16 @@ public class TileParticleAccelerator extends TileInventoryMachine implements IEl
                     if (entityParticle.isDead) {
                         // On particle collision we roll the dice to see if dark-matter is generated.
                         if (entityParticle.didCollide()) {
-                            if (world.rand.nextFloat() <= General.darkMatterSpawnChance) {
-                                inventory.insertItem(3, new ItemStack(ModItems.itemDarkMatterCell), false);
+                            if (world.rand.nextFloat() <= 1 ) {// General.darkMatterSpawnChance) {
+                                ItemStack itemStack = inventoryOut.getStackInSlot(1);
+                                if (!itemStack.isEmpty()) {
+                                    // If the output slot is not empty we must increase stack size
+                                    if (itemStack.getItem() == ModItems.itemDarkMatterCell && itemStack.getCount() < itemStack.getMaxStackSize()) {
+                                        itemStack.setCount(itemStack.getCount() + 1);
+                                    }
+                                } else {
+                                    inventoryOut.setStackInSlot(1, new ItemStack(ModItems.itemDarkMatterCell));
+                                }
                             }
                         }
 
@@ -171,7 +267,7 @@ public class TileParticleAccelerator extends TileInventoryMachine implements IEl
 
                     // Plays sound of particle accelerating past the speed based on total velocity at the time of anti-matter creation.
                     if (entityParticle != null) {
-                        world.playSound(null, pos, ModSoundEvents.ACCELERATOR, SoundCategory.BLOCKS, 1.5F, (float) (0.6 + (0.4 * (entityParticle.getVelocity()) / ANTIMATTER_CREATION_SPEED)));
+                        world.playSound(null, pos, ModSoundEvents.ACCELERATOR, SoundCategory.BLOCKS, 1F, (float) (0.6 + (0.4 * (entityParticle.getVelocity()) / ANTIMATTER_CREATION_SPEED)));
                     }
 
                     energyUsed = energyStorage.extractEnergy(ENERGY_PER_TICK, false);
@@ -225,64 +321,42 @@ public class TileParticleAccelerator extends TileInventoryMachine implements IEl
         return true;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /*
-    @Override
-    public int[] getSlotsForFace(EnumFacing side) {
-        return new int[] { 0, 1, 2, 3 };
-    }
-
-    @Override
-    public boolean canInsertItem(int index, ItemStack itemStack, EnumFacing direction) {
-        return isItemValidForSlot(index, itemStack) && index != 2 && index != 3; // TODO: Convert int to enum.
-    }
-
-    @Override
-    public boolean canExtractItem(int index, ItemStack itemStack, EnumFacing direction) {
-        return index == 2 || index == 3; // TODO: Convert int to enum.
-    }
-    */
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     /**
      * Converts antimatter storage into item if the condition are meet.
      */
     private void outputAntimatter() {
         // Do we have an empty cell in slot one
-        final ItemStack itemStackEmptyCell = inventory.getStackInSlot(1);
+        final ItemStack itemStackEmptyCell = inventoryInCells.getStackInSlot(0);
 
         if (OreDictionaryHelper.isEmptyCell(itemStackEmptyCell) && itemStackEmptyCell.getCount() > 0) {
             // Each cell can only hold 125mg of antimatter
-            // TODO: maybe a config for this?
             if (antimatterCount >= 125) {
-                final ItemStack itemStack = inventory.getStackInSlot(2);
+                final ItemStack antiMatterOutput = inventoryOut.getStackInSlot(0);
 
-                if (!itemStack.isEmpty()) {
+                if (!antiMatterOutput.isEmpty()) {
                     // If the output slot is not empty we must increase stack size
-                    if (itemStack.getItem() == ModItems.itemAntimatterCell) {
-                        final ItemStack newStack = itemStack.copy();
+                    if (antiMatterOutput.getItem() == ModItems.itemAntimatterCell) {
+                        final ItemStack newStack = antiMatterOutput.copy();
 
                         if (newStack.getCount() < newStack.getMaxStackSize()) {
-                            InventoryUtility.decrStackSize(inventory, 1);
+                            InventoryUtility.decrStackSize(inventoryInCells, 0);
                             antimatterCount -= 125;
                             newStack.setCount(newStack.getCount() + 1);
-                            inventory.setStackInSlot(2, newStack);
+                            inventoryOut.setStackInSlot(0, newStack);
                         }
                     }
                 } else {
                     // Remove some of the internal reserves of anti-matter and use it to craft an individual item.
                     antimatterCount -= 125;
-                    InventoryUtility.decrStackSize(inventory, 1);
-                    inventory.setStackInSlot(2, new ItemStack(ModItems.itemAntimatterCell));
+                    InventoryUtility.decrStackSize(inventoryInCells, 0);
+                    inventoryOut.setStackInSlot(0, new ItemStack(ModItems.itemAntimatterCell));
                 }
             }
         }
     }
 
     private void calculateParticleDensity() {
-        final ItemStack itemStack = inventory.getStackInSlot(0);
+        final ItemStack itemStack = inventoryInMatter.getStackInSlot(0);
 
         if (!itemStack.isEmpty()) {
             final Item item = itemStack.getItem();

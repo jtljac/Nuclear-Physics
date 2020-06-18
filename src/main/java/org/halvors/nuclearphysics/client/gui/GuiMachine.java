@@ -19,7 +19,6 @@ public class GuiMachine<T extends TileMachine> extends GuiComponentContainer<T> 
 
     public GuiMachine(final T tile, final Container container) {
         super(tile, container);
-
         components.add(new GuiEnergyInfo(() -> {
             final List<String> list = new ArrayList<>();
             list.add(LanguageUtility.transelate("gui.using") + ": " + UnitDisplay.getEnergyDisplay(tile.getEnergyUsed()) + "/t");
