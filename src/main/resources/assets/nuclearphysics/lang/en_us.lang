@@ -103,6 +103,7 @@ gui.process=Process
 gui.processing=Processing
 gui.ready=Ready
 gui.idle=Idle
+gui.progress=Progress
 gui.status=Status
 gui.failedToEmitTryRotating=Failed to emit, try rotating
 gui.accelerating=Accelerating

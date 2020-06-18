@@ -15,8 +15,8 @@
       "explosive": "icbmclassic:nuclear"
     },
     "n": {
-      "item": "nuclearphysics:antimatter_cell",
-      "data": 0
+      "type": "forge:ore_dict",
+      "ore": "antimatterGram"
     }
   }
 }

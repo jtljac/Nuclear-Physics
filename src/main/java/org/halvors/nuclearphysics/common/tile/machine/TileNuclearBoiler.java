@@ -50,10 +50,8 @@ public class TileNuclearBoiler extends TileProcess {
                         return FluidUtility.isEmptyContainer(itemStack) || FluidUtility.isFilledContainer(itemStack, FluidRegistry.WATER);
 
                     // TODO: Add uranium hexaflouride container here.
-                    /*
                     case 4: // Output tank drain slot.
                         return OreDictionaryHelper.isEmptyCell(itemStack);
-                    */
                 }
 
                 return false;

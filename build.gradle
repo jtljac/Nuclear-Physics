@@ -34,6 +34,11 @@ repositories {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
     }
+
+    maven {
+        name = 'curseforge'
+        url = 'https://minecraft.curseforge.com/api/maven/'
+    }
 }
 
 // Define properties file
@@ -63,6 +68,7 @@ minecraft {
 
 dependencies {
     compile "mezz.jei:jei_${config.minecraft_version}:${config.jei_version}"
+    compile "mekanism:Mekanism-1.12.2:9.8.3.390:api"
 }
 
 processResources {
