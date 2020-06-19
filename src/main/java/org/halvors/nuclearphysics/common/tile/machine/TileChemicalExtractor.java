@@ -1,9 +1,18 @@
 package org.halvors.nuclearphysics.common.tile.machine;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.FluidTankPropertiesWrapper;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.ItemStackHandler;
 import org.halvors.nuclearphysics.common.ConfigurationManager.General;
 import org.halvors.nuclearphysics.common.NuclearPhysics;
@@ -13,20 +22,31 @@ import org.halvors.nuclearphysics.common.capabilities.fluid.LiquidTank;
 import org.halvors.nuclearphysics.common.init.ModFluids;
 import org.halvors.nuclearphysics.common.init.ModItems;
 import org.halvors.nuclearphysics.common.network.packet.PacketTileEntity;
+import org.halvors.nuclearphysics.common.tile.TileInventoryMachine;
+import org.halvors.nuclearphysics.common.tile.TileMachine;
 import org.halvors.nuclearphysics.common.utility.EnergyUtility;
 import org.halvors.nuclearphysics.common.utility.FluidUtility;
 import org.halvors.nuclearphysics.common.utility.InventoryUtility;
 import org.halvors.nuclearphysics.common.utility.OreDictionaryHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
-public class TileChemicalExtractor extends TileProcess {
+public class TileChemicalExtractor extends TileMachine implements IFluidHandler {
+    private static final String NBT_TANK_INPUT = "tankInput";
+    private static final String NBT_TANK_OUTPUT = "tankInOutput";
+
     private static final int ENERGY_PER_TICK = 20000;
     private static final int EXTRACT_SPEED = 100;
     public static final int TICKS_REQUIRED = 14 * 20;
 
-    //private IItemHandler top = new RangedWrapper(inventory, 2, 3);
-    //private IItemHandler sides = new RangedWrapper(inventory, 0, 2);
+    // Animation
+    public float rotation = 0;
+
+    // Tanks
+    private LiquidTank tankInput;
+    private LiquidTank tankOutput;
 
     public TileChemicalExtractor() {
         this(EnumMachine.CHEMICAL_EXTRACTOR);
@@ -103,14 +123,69 @@ public class TileChemicalExtractor extends TileProcess {
                 return false;
             }
         };
+    }
 
-        inputSlot = 1;
-        outputSlot = 2;
+    public FluidTank getInputTank() {
+        return tankInput;
+    }
 
-        tankInputFillSlot = 3;
-        tankInputDrainSlot = 4;
-        tankOutputFillSlot = 5;
-        tankOutputDrainSlot = 6;
+    public FluidTank getOutputTank() {
+        return tankOutput;
+    }
+
+    @Override
+    public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final EnumFacing facing) {
+        return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    @Nonnull
+    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return (T) this;
+        }
+
+        return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public void readFromNBT(final NBTTagCompound tag) {
+        super.readFromNBT(tag);
+
+        CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.readNBT(tankInput, null, tag.getTag(NBT_TANK_INPUT));
+        CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.readNBT(tankOutput, null, tag.getTag(NBT_TANK_OUTPUT));
+    }
+
+    @Override
+    @Nonnull
+    public NBTTagCompound writeToNBT(final NBTTagCompound tag) {
+        super.writeToNBT(tag);
+
+        tag.setTag(NBT_TANK_INPUT, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.writeNBT(tankInput, null));
+        tag.setTag(NBT_TANK_OUTPUT, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.writeNBT(tankOutput, null));
+
+        return tag;
+    }
+
+    @Override
+    public void handlePacketData(final ByteBuf dataStream) {
+        super.handlePacketData(dataStream);
+
+        if (world.isRemote) {
+            tankInput.handlePacketData(dataStream);
+            tankOutput.handlePacketData(dataStream);
+        }
+    }
+
+    @Override
+    public List<Object> getPacketData(final List<Object> objects) {
+        super.getPacketData(objects);
+
+        tankInput.getPacketData(objects);
+        tankOutput.getPacketData(objects);
+
+        return objects;
     }
 
     @Override
@@ -128,7 +203,7 @@ public class TileChemicalExtractor extends TileProcess {
                 FluidUtility.transferFluidToNeighbors(world, pos, tankOutput);
             }
 
-            EnergyUtility.discharge(0, this);
+            EnergyUtility.discharge(inventory.getStackInSlot(0), this);
 
             if (canFunction() && canProcess() && energyStorage.extractEnergy(ENERGY_PER_TICK, true) >= ENERGY_PER_TICK) {
                 if (operatingTicks < TICKS_REQUIRED) {
@@ -204,7 +279,7 @@ public class TileChemicalExtractor extends TileProcess {
         final FluidStack inputFluidStack = tankInput.getFluid();
 
         if (inputFluidStack != null) {
-            if (inputFluidStack.isFluidEqual(ModFluids.fluidStackWater) && inputFluidStack.amount >= Fluid.BUCKET_VOLUME && OreDictionaryHelper.isUraniumOre(inventory.getStackInSlot(inputSlot))) {
+            if (inputFluidStack.isFluidEqual(ModFluids.fluidStackWater) && inputFluidStack.amount >= Fluid.BUCKET_VOLUME && OreDictionaryHelper.isUraniumOre(inventory.getStackInSlot(1))) {
                 return true;
             }
 
@@ -231,9 +306,9 @@ public class TileChemicalExtractor extends TileProcess {
      */
     public boolean refineUranium() {
         if (canProcess()) {
-            if (OreDictionaryHelper.isUraniumOre(inventory.getStackInSlot(inputSlot))) {
+            if (OreDictionaryHelper.isUraniumOre(inventory.getStackInSlot(1))) {
                 tankInput.drainInternal(Fluid.BUCKET_VOLUME, true);
-                inventory.insertItem(outputSlot, new ItemStack(ModItems.itemYellowCake, 3), false);
+                inventory.insertItem(2, new ItemStack(ModItems.itemYellowCake, 3), false);
                 InventoryUtility.decrStackSize(inventory, 1);
 
                 return true;
@@ -274,5 +349,27 @@ public class TileChemicalExtractor extends TileProcess {
         }
 
         return false;
+    }
+
+    @Override
+    public IFluidTankProperties[] getTankProperties() {
+        return new IFluidTankProperties[] { new FluidTankPropertiesWrapper(tankInput), new FluidTankPropertiesWrapper(tankOutput) };
+    }
+
+    @Override
+    public int fill(final FluidStack resource, final boolean doFill) {
+        return tankInput.fill(resource, doFill);
+    }
+
+    @Nullable
+    @Override
+    public FluidStack drain(final FluidStack resource, final boolean doDrain) {
+        return tankOutput.drain(resource, doDrain);
+    }
+
+    @Nullable
+    @Override
+    public FluidStack drain(final int maxDrain, final boolean doDrain) {
+        return tankOutput.drain(maxDrain, doDrain);
     }
 }
