@@ -18,6 +18,10 @@ public class TileRotatable extends TileBase implements ITileNetwork, ITileRotata
 
     }
 
+    protected EnumFacing absoluteFacingToRelative(EnumFacing absolute) {
+        return EnumFacing.byHorizontalIndex(Math.floorMod(absolute.getHorizontalIndex() - facing.getHorizontalIndex() + 2, 4));
+    }
+
     @Override
     public void readFromNBT(final NBTTagCompound tag) {
         super.readFromNBT(tag);

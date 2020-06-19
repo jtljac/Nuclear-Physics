@@ -13,6 +13,8 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankPropertiesWrapper;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.halvors.nuclearphysics.common.ConfigurationManager.General;
 import org.halvors.nuclearphysics.common.NuclearPhysics;
@@ -22,7 +24,6 @@ import org.halvors.nuclearphysics.common.capabilities.fluid.LiquidTank;
 import org.halvors.nuclearphysics.common.init.ModFluids;
 import org.halvors.nuclearphysics.common.init.ModItems;
 import org.halvors.nuclearphysics.common.network.packet.PacketTileEntity;
-import org.halvors.nuclearphysics.common.tile.TileInventoryMachine;
 import org.halvors.nuclearphysics.common.tile.TileMachine;
 import org.halvors.nuclearphysics.common.utility.EnergyUtility;
 import org.halvors.nuclearphysics.common.utility.FluidUtility;
@@ -37,6 +38,11 @@ public class TileChemicalExtractor extends TileMachine implements IFluidHandler 
     private static final String NBT_TANK_INPUT = "tankInput";
     private static final String NBT_TANK_OUTPUT = "tankInOutput";
 
+    private static final String NBT_SLOT_INPUT = "slotInputMatter";
+    private static final String NBT_SLOT_OUTPUT = "slotInputCells";
+    private static final String NBT_SLOT_ENERGY = "slotEnergy";
+    private static final String NBT_SLOT_FLUIDS = "slotOutput";
+
     private static final int ENERGY_PER_TICK = 20000;
     private static final int EXTRACT_SPEED = 100;
     public static final int TICKS_REQUIRED = 14 * 20;
@@ -48,6 +54,11 @@ public class TileChemicalExtractor extends TileMachine implements IFluidHandler 
     private LiquidTank tankInput;
     private LiquidTank tankOutput;
 
+    private IItemHandlerModifiable inventoryInput;
+    private IItemHandlerModifiable inventoryOutput;
+    private IItemHandlerModifiable inventoryEnergy;
+    private IItemHandlerModifiable inventoryFluids;
+
     public TileChemicalExtractor() {
         this(EnumMachine.CHEMICAL_EXTRACTOR);
     }
@@ -56,47 +67,8 @@ public class TileChemicalExtractor extends TileMachine implements IFluidHandler 
         super(type);
 
         energyStorage = new EnergyStorage(ENERGY_PER_TICK * 2);
-        inventory = new ItemStackHandler(7) {
-            @Override
-            protected void onContentsChanged(final int slot) {
-                super.onContentsChanged(slot);
-                markDirty();
-            }
 
-            private boolean isItemValidForSlot(final int slot, final ItemStack itemStack) {
-                switch (slot) {
-                    case 0: // Battery input slot.
-                        return EnergyUtility.canBeDischarged(itemStack);
-
-                    case 1: // Item input slot.
-                        return OreDictionaryHelper.isUraniumOre(itemStack);
-
-                    case 2: // Item output slot.
-                        return OreDictionaryHelper.isYellowCake(itemStack);
-
-                    case 3: // Input tank fill slot.
-                    case 4: // Input tank drain slot.
-                        return FluidUtility.isEmptyContainer(itemStack) || FluidUtility.isFilledContainer(itemStack, FluidRegistry.WATER) || FluidUtility.isFilledContainer(itemStack, ModFluids.deuterium);
-
-                    case 5: // Output tank fill slot.
-                        return FluidUtility.isEmptyContainer(itemStack);
-
-                    case 6: // Output tank drain slot.
-                        return FluidUtility.isEmptyContainer(itemStack) || FluidUtility.isFilledContainer(itemStack, ModFluids.deuterium) || FluidUtility.isFilledContainer(itemStack, ModFluids.tritium);
-                }
-
-                return false;
-            }
-
-            @Override
-            public ItemStack insertItem(final int slot, @Nonnull final ItemStack itemStack, final boolean simulate) {
-                if (!isItemValidForSlot(slot, itemStack)) {
-                    return itemStack;
-                }
-
-                return super.insertItem(slot, itemStack, simulate);
-            }
-        };
+        createInventories();
 
         tankInput = new LiquidTank(Fluid.BUCKET_VOLUME * 10) {
             @Override
@@ -125,6 +97,96 @@ public class TileChemicalExtractor extends TileMachine implements IFluidHandler 
         };
     }
 
+    private void createInventories() {
+        createInput();
+        createOutput();
+        createEnergy();
+        createFluids();
+    }
+
+    private void createInput() {
+        inventoryInput = new ItemStackHandler(1) {
+            @Override
+            protected void onContentsChanged(final int slot) {
+                super.onContentsChanged(slot);
+                markDirty();
+            }
+
+            @Override
+            public ItemStack insertItem(final int slot, @Nonnull final ItemStack itemStack, final boolean simulate) {
+                if (!OreDictionaryHelper.isUraniumOre(itemStack)) {
+                    return itemStack;
+                }
+
+                return super.insertItem(slot, itemStack, simulate);
+            }
+        };
+    }
+
+    private void createOutput() {
+        inventoryOutput = new ItemStackHandler(1) {
+            @Override
+            protected void onContentsChanged(final int slot) {
+                super.onContentsChanged(slot);
+                markDirty();
+            }
+
+            @Override
+            public ItemStack insertItem(final int slot, @Nonnull final ItemStack itemStack, final boolean simulate) {
+                return itemStack;
+            }
+        };
+    }
+
+    private void createEnergy() {
+        inventoryEnergy = new ItemStackHandler(1) {
+            @Override
+            protected void onContentsChanged(final int slot) {
+                super.onContentsChanged(slot);
+                markDirty();
+            }
+
+            @Override
+            public ItemStack insertItem(final int slot, @Nonnull final ItemStack itemStack, final boolean simulate) {
+                if (!EnergyUtility.canBeDischarged(itemStack)) {
+                    return itemStack;
+                }
+
+                return super.insertItem(slot, itemStack, simulate);
+            }
+        };
+    }
+
+    private void createFluids() {
+        inventoryFluids = new ItemStackHandler(4) {
+            @Override
+            protected void onContentsChanged(final int slot) {
+                super.onContentsChanged(slot);
+                markDirty();
+            }
+
+            private boolean isItemValidForSlot(final int slot, final ItemStack itemStack) {
+                switch (slot) {
+                    case 0: // Input tank Fill/Drain slot.
+                        return FluidUtility.isEmptyContainer(itemStack) || FluidUtility.isFilledContainer(itemStack, FluidRegistry.WATER) || FluidUtility.isFilledContainer(itemStack, ModFluids.deuterium);
+                    case 2: // Output tank Drain slot.
+                        return FluidUtility.isEmptyContainer(itemStack);
+                }
+
+                return false;
+            }
+
+            @Override
+            public ItemStack insertItem(final int slot, @Nonnull final ItemStack itemStack, final boolean simulate) {
+                if (!isItemValidForSlot(slot, itemStack)) {
+                    return itemStack;
+                }
+
+                return super.insertItem(slot, itemStack, simulate);
+            }
+        };
+    }
+
     public FluidTank getInputTank() {
         return tankInput;
     }
@@ -133,17 +195,46 @@ public class TileChemicalExtractor extends TileMachine implements IFluidHandler 
         return tankOutput;
     }
 
+    public IItemHandlerModifiable getInventoryInput() {
+        return inventoryInput;
+    }
+
+    public IItemHandlerModifiable getInventoryOutput() {
+        return inventoryOutput;
+    }
+
+    public IItemHandlerModifiable getInventoryEnergy() {
+        return inventoryEnergy;
+    }
+
+    public IItemHandlerModifiable getInventoryFluids() {
+        return inventoryFluids;
+    }
+
     @Override
     public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final EnumFacing facing) {
-        return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
+        return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     @Nonnull
-    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing) {
+    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing Facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return (T) this;
+        } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (Facing != null) {
+                switch (absoluteFacingToRelative(Facing)) {
+                    case UP:
+                    case EAST:
+                    case NORTH:
+                        return (T) inventoryInput;
+                    case DOWN:
+                    case WEST:
+                    case SOUTH:
+                        return (T) inventoryOutput;
+                }
+            }
         }
 
         return super.getCapability(capability, facing);
@@ -155,6 +246,15 @@ public class TileChemicalExtractor extends TileMachine implements IFluidHandler 
 
         CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.readNBT(tankInput, null, tag.getTag(NBT_TANK_INPUT));
         CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.readNBT(tankOutput, null, tag.getTag(NBT_TANK_OUTPUT));
+
+        InventoryUtility.readFromNBT(tag, inventoryInput);
+        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventoryInput, null, tag.getTag(NBT_SLOT_INPUT));
+        InventoryUtility.readFromNBT(tag, inventoryOutput);
+        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventoryOutput, null, tag.getTag(NBT_SLOT_OUTPUT));
+        InventoryUtility.readFromNBT(tag, inventoryEnergy);
+        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventoryEnergy, null, tag.getTag(NBT_SLOT_ENERGY));
+        InventoryUtility.readFromNBT(tag, inventoryFluids);
+        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventoryFluids, null, tag.getTag(NBT_SLOT_FLUIDS));
     }
 
     @Override
@@ -164,6 +264,11 @@ public class TileChemicalExtractor extends TileMachine implements IFluidHandler 
 
         tag.setTag(NBT_TANK_INPUT, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.writeNBT(tankInput, null));
         tag.setTag(NBT_TANK_OUTPUT, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.writeNBT(tankOutput, null));
+
+        tag.setTag(NBT_SLOT_INPUT, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventoryInput, null));
+        tag.setTag(NBT_SLOT_OUTPUT, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventoryOutput, null));
+        tag.setTag(NBT_SLOT_ENERGY, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventoryEnergy, null));
+        tag.setTag(NBT_SLOT_FLUIDS, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventoryFluids, null));
 
         return tag;
     }
@@ -203,7 +308,15 @@ public class TileChemicalExtractor extends TileMachine implements IFluidHandler 
                 FluidUtility.transferFluidToNeighbors(world, pos, tankOutput);
             }
 
-            EnergyUtility.discharge(inventory.getStackInSlot(0), this);
+            if (getInputTank() != null) {
+                FluidUtility.fillOrDrainTank(0, 1, inventoryFluids, getInputTank());
+            }
+
+            if (getOutputTank() != null) {
+                FluidUtility.fillOrDrainTank(2, 3, inventoryFluids, getOutputTank());
+            }
+
+            EnergyUtility.discharge(inventoryEnergy.getStackInSlot(0), this);
 
             if (canFunction() && canProcess() && energyStorage.extractEnergy(ENERGY_PER_TICK, true) >= ENERGY_PER_TICK) {
                 if (operatingTicks < TICKS_REQUIRED) {
@@ -231,55 +344,12 @@ public class TileChemicalExtractor extends TileMachine implements IFluidHandler 
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /*
-    @SuppressWarnings("unchecked")
-    @Override
-    @Nonnull
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (facing == null) {
-                return (T) inventory;
-            }
-
-            switch (facing) {
-                case UP:
-                    return (T) top;
-
-                case DOWN:
-                    return null;
-
-                default:
-                    return (T) sides;
-            }
-        }
-
-        return super.getCapability(capability, facing);
-    }
-    */
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /*
-    @Override
-    public int[] getSlotsForFace(EnumFacing side) {
-        return new int[] { 1, 2, 3 };
-    }
-
-    @Override
-    public boolean canExtractItem(int slot, ItemStack itemstack, EnumFacing side) {
-        return slot == 2;
-    }
-    */
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public boolean canProcess() {
         final FluidStack inputFluidStack = tankInput.getFluid();
 
         if (inputFluidStack != null) {
-            if (inputFluidStack.isFluidEqual(ModFluids.fluidStackWater) && inputFluidStack.amount >= Fluid.BUCKET_VOLUME && OreDictionaryHelper.isUraniumOre(inventory.getStackInSlot(1))) {
+            if (inputFluidStack.isFluidEqual(ModFluids.fluidStackWater) && inputFluidStack.amount >= Fluid.BUCKET_VOLUME && OreDictionaryHelper.isUraniumOre(inventoryInput.getStackInSlot(0)) && inventoryOutput.getStackInSlot(0).getCount() + 3 <= inventoryOutput.getStackInSlot(0).getMaxStackSize()) {
                 return true;
             }
 
@@ -306,10 +376,13 @@ public class TileChemicalExtractor extends TileMachine implements IFluidHandler 
      */
     public boolean refineUranium() {
         if (canProcess()) {
-            if (OreDictionaryHelper.isUraniumOre(inventory.getStackInSlot(1))) {
+            if (OreDictionaryHelper.isUraniumOre(inventoryInput.getStackInSlot(0))) {
                 tankInput.drainInternal(Fluid.BUCKET_VOLUME, true);
-                inventory.insertItem(2, new ItemStack(ModItems.itemYellowCake, 3), false);
-                InventoryUtility.decrStackSize(inventory, 1);
+                InventoryUtility.decrStackSize(inventoryInput, 0);
+                ItemStack output = inventoryOutput.getStackInSlot(0);
+                if (output.isEmpty()) inventoryOutput.setStackInSlot(0, new ItemStack(ModItems.itemYellowCake, 3));
+                else if (output.getCount() + 3 <= output.getMaxStackSize()) output.setCount(output.getCount() + 3);
+                else return false;
 
                 return true;
             }
@@ -336,12 +409,12 @@ public class TileChemicalExtractor extends TileMachine implements IFluidHandler 
 
     public boolean extractTritium() {
         if (canProcess()) {
-            final int deutermiumUsage = General.deutermiumPerTritium;
-            final FluidStack fluidStack = tankInput.drainInternal(deutermiumUsage * EXTRACT_SPEED, false);
+            final int deuteriumUsage = General.deutermiumPerTritium;
+            final FluidStack fluidStack = tankInput.drainInternal(deuteriumUsage * EXTRACT_SPEED, false);
 
             if (fluidStack != null && fluidStack.amount >= 1 && fluidStack.isFluidEqual(ModFluids.fluidStackDeuterium)) {
                 if (tankOutput.fillInternal(new FluidStack(ModFluids.tritium, EXTRACT_SPEED), true) >= EXTRACT_SPEED) {
-                    tankInput.drainInternal(deutermiumUsage * EXTRACT_SPEED, true);
+                    tankInput.drainInternal(deuteriumUsage * EXTRACT_SPEED, true);
 
                     return true;
                 }

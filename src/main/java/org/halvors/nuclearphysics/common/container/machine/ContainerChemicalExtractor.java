@@ -10,25 +10,25 @@ public class ContainerChemicalExtractor extends ContainerBase<TileChemicalExtrac
         super(7, inventoryPlayer, tile);
 
         // Battery
-        addSlotToContainer(new SlotItemHandler(tile.getInventory(), 0, 80, 50));
+        addSlotToContainer(new SlotItemHandler(tile.getInventoryEnergy(), 0, 80, 50));
 
         // Process Input (Uranium)
-        addSlotToContainer(new SlotItemHandler(tile.getInventory(), 1, 53, 25));
+        addSlotToContainer(new SlotItemHandler(tile.getInventoryInput(), 0, 53, 25));
 
         // Process Output
-        addSlotToContainer(new SlotItemHandler(tile.getInventory(), 2, 107, 25));
+        addSlotToContainer(new SlotItemHandler(tile.getInventoryOutput(), 0, 107, 25));
 
         // Fluid input fill
-        addSlotToContainer(new SlotItemHandler(tile.getInventory(), 3, 25, 19));
+        addSlotToContainer(new SlotItemHandler(tile.getInventoryFluids(), 0, 25, 19));
 
         // Fluid input drain
-        addSlotToContainer(new SlotItemHandler(tile.getInventory(), 4, 25, 50));
+        addSlotToContainer(new SlotItemHandler(tile.getInventoryFluids(), 1, 25, 50));
 
         // Fluid output fill
-        addSlotToContainer(new SlotItemHandler(tile.getInventory(), 5, 135, 19));
+        addSlotToContainer(new SlotItemHandler(tile.getInventoryFluids(), 2, 135, 19));
 
         // Fluid output drain
-        addSlotToContainer(new SlotItemHandler(tile.getInventory(), 6, 135, 50));
+        addSlotToContainer(new SlotItemHandler(tile.getInventoryFluids(), 3, 135, 50));
 
         // Player inventory
         addPlayerInventory(inventoryPlayer.player);
