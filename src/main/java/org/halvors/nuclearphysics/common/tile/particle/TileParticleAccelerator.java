@@ -3,6 +3,7 @@ package org.halvors.nuclearphysics.common.tile.particle;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -26,6 +27,7 @@ import org.halvors.nuclearphysics.common.init.ModSoundEvents;
 import org.halvors.nuclearphysics.common.item.particle.ItemAntimatterCell;
 import org.halvors.nuclearphysics.common.network.packet.PacketTileEntity;
 import org.halvors.nuclearphysics.common.tile.TileMachine;
+import org.halvors.nuclearphysics.common.utility.EnergyUtility;
 import org.halvors.nuclearphysics.common.utility.InventoryUtility;
 import org.halvors.nuclearphysics.common.utility.OreDictionaryHelper;
 
@@ -38,6 +40,7 @@ public class TileParticleAccelerator extends TileMachine implements IElectromagn
     // Slots
     private static final String NBT_SLOT_INPUT_MATTER = "slotInputMatter";
     private static final String NBT_SLOT_INPUT_CELLS = "slotInputCells";
+    private static final String NBT_SLOT_ENERGY = "slotEnergy";
     private static final String NBT_SLOT_OUTPUT = "slotOutput";
     // Other
     private static final String NBT_TOTAL_ENERGY_CONSUMED = "totalEnergyConsumed";
@@ -64,6 +67,7 @@ public class TileParticleAccelerator extends TileMachine implements IElectromagn
     private IItemHandlerModifiable inventoryInMatter;
     private IItemHandlerModifiable inventoryInCells;
     private IItemHandlerModifiable inventoryOut;
+    private IItemHandlerModifiable inventoryEnergy;
 
     public TileParticleAccelerator() {
         this(EnumMachine.PARTICLE_ACCELERATOR);
@@ -80,6 +84,7 @@ public class TileParticleAccelerator extends TileMachine implements IElectromagn
         createInputCells();
         createInputMatter();
         createOutput();
+        createEnergy(); // Impossible, energy can only be transferred
     }
 
     private void createInputCells() {
@@ -126,6 +131,24 @@ public class TileParticleAccelerator extends TileMachine implements IElectromagn
         };
     }
 
+    private void createEnergy() {
+        inventoryEnergy = new ItemStackHandler(1){
+            @Override
+            protected void onContentsChanged(final int slot) {
+                super.onContentsChanged(slot);
+                markDirty();
+            }
+
+            @Override
+            public ItemStack insertItem(final int slot, final ItemStack stack, final boolean simulate) {
+                if (!EnergyUtility.canBeDischarged(stack)){
+                    return stack;
+                }
+                return super.insertItem(slot, stack, simulate);
+            }
+        };
+    }
+
     public IItemHandlerModifiable getInventoryInCells(){
         return inventoryInCells;
     }
@@ -136,6 +159,10 @@ public class TileParticleAccelerator extends TileMachine implements IElectromagn
 
     public IItemHandlerModifiable getInventoryOut(){
         return inventoryOut;
+    }
+
+    public IItemHandlerModifiable getInventoryEnergy(){
+        return inventoryEnergy;
     }
 
     @Override
@@ -179,6 +206,9 @@ public class TileParticleAccelerator extends TileMachine implements IElectromagn
         InventoryUtility.readFromNBT(tag, inventoryOut);
         CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventoryOut, null, tag.getTag(NBT_SLOT_OUTPUT));
 
+        InventoryUtility.readFromNBT(tag, inventoryEnergy);
+        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventoryEnergy, null, tag.getTag(NBT_SLOT_ENERGY));
+
         totalEnergyConsumed = tag.getInteger(NBT_TOTAL_ENERGY_CONSUMED);
         antimatterCount = tag.getInteger(NBT_ANTIMATTER_COUNT);
     }
@@ -190,6 +220,7 @@ public class TileParticleAccelerator extends TileMachine implements IElectromagn
         tag.setTag(NBT_SLOT_INPUT_CELLS, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventoryInCells, null));
         tag.setTag(NBT_SLOT_INPUT_MATTER, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventoryInMatter, null));
         tag.setTag(NBT_SLOT_OUTPUT, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventoryOut, null));
+        tag.setTag(NBT_SLOT_ENERGY, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventoryEnergy, null));
 
         tag.setInteger(NBT_TOTAL_ENERGY_CONSUMED, totalEnergyConsumed);
         tag.setInteger(NBT_ANTIMATTER_COUNT, antimatterCount);
@@ -207,6 +238,8 @@ public class TileParticleAccelerator extends TileMachine implements IElectromagn
             velocity = getParticleVelocity();
 
             outputAntimatter();
+
+            EnergyUtility.discharge(inventoryEnergy.getStackInSlot(0), this);
 
             final ItemStack matter = inventoryInMatter.getStackInSlot(0);
 

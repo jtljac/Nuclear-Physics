@@ -18,10 +18,11 @@ public class GuiParticleAccelerator extends GuiMachine<TileParticleAccelerator> 
     public GuiParticleAccelerator(final InventoryPlayer inventoryPlayer, final TileParticleAccelerator tile) {
         super(tile, new ContainerParticleAccelerator(inventoryPlayer, tile));
 
-        components.add(new GuiSlot(this, 131, 25));
-        components.add(new GuiSlot(this, 131, 50));
-        components.add(new GuiSlot(this, 131, 74));
-        components.add(new GuiSlot(this, 105, 74));
+        components.add(new GuiSlot(this, 141, 25));
+        components.add(new GuiSlot(this, 141, 50));
+        components.add(new GuiSlot(this, 141, 74));
+        components.add(new GuiSlot(this, 115, 74));
+        components.add(new GuiSlot(GuiSlot.EnumSlotType.BATTERY, this, 89, 74));
     }
 
     @Override

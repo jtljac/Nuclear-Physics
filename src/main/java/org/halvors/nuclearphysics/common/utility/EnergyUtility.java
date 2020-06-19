@@ -10,26 +10,18 @@ import net.minecraftforge.items.IItemHandler;
 public class EnergyUtility {
     /**
      * Universally discharges an item, and updates the TileEntity's energy level.
-     * @param slot - ID of the slot of which to charge
+     * @param energyStack - The itemstack to discharge from
      * @param tile - TileEntity the item is being charged in.
      */
-    public static void discharge(final int slot, final TileEntity tile) {
+    public static void discharge(final ItemStack energyStack, final TileEntity tile) {
         if (tile != null && tile.hasCapability(CapabilityEnergy.ENERGY, null)) {
             final IEnergyStorage energyStorage = tile.getCapability(CapabilityEnergy.ENERGY, null);
-
-            if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-                final IItemHandler inventory = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                final ItemStack itemStack = inventory.getStackInSlot(slot);
-
-                if (canBeDischarged(itemStack)) {
-                    if (itemStack.hasCapability(CapabilityEnergy.ENERGY, null)) {
-                        final IEnergyStorage itemEnergyStorage = itemStack.getCapability(CapabilityEnergy.ENERGY, null);
-
-                        if (energyStorage.getEnergyStored() < energyStorage.getMaxEnergyStored()) {
-                            final int needed = Math.round(Math.min(Integer.MAX_VALUE, (energyStorage.getMaxEnergyStored() - energyStorage.getEnergyStored())));
-
-                            energyStorage.receiveEnergy(itemEnergyStorage.extractEnergy(needed, false), false);
-                        }
+            if (canBeDischarged(energyStack)) {
+                if (energyStack.hasCapability(CapabilityEnergy.ENERGY, null)) {
+                    final IEnergyStorage itemEnergyStorage = energyStack.getCapability(CapabilityEnergy.ENERGY, null);
+                    if (energyStorage.getEnergyStored() < energyStorage.getMaxEnergyStored()) {
+                        final int needed = Math.round(Math.min(Integer.MAX_VALUE, (energyStorage.getMaxEnergyStored() - energyStorage.getEnergyStored())));
+                        energyStorage.receiveEnergy(itemEnergyStorage.extractEnergy(needed, false), false);
                     }
                 }
             }

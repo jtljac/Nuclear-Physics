@@ -115,7 +115,7 @@ public class TileNuclearBoiler extends TileProcess {
                 FluidUtility.transferFluidToNeighbors(world, pos, tankOutput);
             }
 
-            EnergyUtility.discharge(0, this);
+            EnergyUtility.discharge(inventory.getStackInSlot(0), this);
 
             if (canFunction() && canProcess() && energyStorage.extractEnergy(ENERGY_PER_TICK, true) >= ENERGY_PER_TICK) {
                 if (operatingTicks < TICKS_REQUIRED) {
