@@ -155,9 +155,11 @@ public class FluidUtility {
                     } else {
                         FluidUtil.tryFillContainer(itemStackInput, tank, Integer.MAX_VALUE, null, true);
                     }
-
                     InventoryUtility.decrStackSize(inventory, containerInput);
 
+                    if (!itemStackOutput.isEmpty()) {
+                        itemStackResult.setCount(itemStackResult.getCount() + itemStackOutput.getCount());
+                    }
                     inventory.setStackInSlot(containerOutput, itemStackResult);
                     // inventory.insertItem(containerOutput, itemStackResult, false);
                 }
