@@ -35,6 +35,13 @@ public class GuiComponentContainer<T extends TileEntity> extends GuiContainer im
     }
 
     @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
+    @Override
     protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 
@@ -48,7 +55,6 @@ public class GuiComponentContainer<T extends TileEntity> extends GuiContainer im
 
     @Override
     protected void drawGuiContainerBackgroundLayer(final float partialTick, final int mouseX, final int mouseY) {
-        drawDefaultBackground();
         RenderUtility.bindTexture(defaultResource);
 
         GlStateManager.color(1, 1, 1, 1);

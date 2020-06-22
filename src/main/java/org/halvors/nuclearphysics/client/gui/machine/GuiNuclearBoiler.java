@@ -26,7 +26,8 @@ public class GuiNuclearBoiler extends GuiMachine<TileNuclearBoiler> {
         components.add(new GuiSlot(EnumSlotType.LIQUID, this, 24, 18));
         components.add(new GuiSlot(EnumSlotType.LIQUID, this, 24, 49));
         components.add(new GuiFluidGauge(tile::getOutputTank, this, 154, 18));
-        components.add(new GuiSlot(EnumSlotType.GAS, this, 134, 49));
+        components.add(new GuiSlot(EnumSlotType.LIQUID, this, 134, 18));
+        components.add(new GuiSlot(EnumSlotType.LIQUID, this, 134, 49));
     }
 
     @Override

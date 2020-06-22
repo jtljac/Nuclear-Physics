@@ -91,7 +91,8 @@ public class ItemCell extends ItemTooltip {
         EMPTY,
         DEUTERIUM(ModFluids.deuterium),
         TRITIUM(ModFluids.tritium),
-        WATER(FluidRegistry.WATER);
+        WATER(FluidRegistry.WATER),
+        URANIUMHEXAFLUORIDE(ModFluids.uraniumHexafluoride);
 
         private Fluid fluid;
 

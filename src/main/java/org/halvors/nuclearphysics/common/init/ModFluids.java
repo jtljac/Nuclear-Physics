@@ -37,7 +37,7 @@ public class ModFluids {
             fluid -> fluid.setDensity(1110), // Density: 1.11 g/cm3
             fluid -> new BlockFluidClassic(fluid, new MaterialLiquid(MapColor.ADOBE)));
 
-    public static final Fluid uraniumHexaflouride = createFluid("uranium_hexafluoride", false,
+    public static final Fluid uraniumHexafluoride = createFluid("uranium_hexafluoride", false,
             fluid -> fluid.setDensity(5090).setGaseous(true), // Density: 5.09 g/cm3
             fluid -> new BlockFluidClassic(fluid, new MaterialLiquid(MapColor.ADOBE)));
 
