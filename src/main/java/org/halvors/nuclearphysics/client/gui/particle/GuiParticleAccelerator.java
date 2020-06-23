@@ -11,12 +11,18 @@ import org.halvors.nuclearphysics.common.entity.EntityParticle;
 import org.halvors.nuclearphysics.common.science.unit.UnitDisplay;
 import org.halvors.nuclearphysics.common.tile.particle.TileParticleAccelerator;
 import org.halvors.nuclearphysics.common.type.EnumColor;
+import org.halvors.nuclearphysics.common.type.EnumResource;
 import org.halvors.nuclearphysics.common.utility.LanguageUtility;
+import org.halvors.nuclearphysics.common.utility.ResourceUtility;
 
 @SideOnly(Side.CLIENT)
 public class GuiParticleAccelerator extends GuiMachine<TileParticleAccelerator> {
     public GuiParticleAccelerator(final InventoryPlayer inventoryPlayer, final TileParticleAccelerator tile) {
-        super(tile, new ContainerParticleAccelerator(inventoryPlayer, tile));
+        super(tile, new ContainerParticleAccelerator(inventoryPlayer, tile), 47);
+
+        defaultResource = ResourceUtility.getResource(EnumResource.GUI, "base_tall.png");
+        ySize = 217;
+        titleOffset = -24;
 
         components.add(new GuiSlot(this, 141, 25));
         components.add(new GuiSlot(this, 141, 50));

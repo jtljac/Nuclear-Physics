@@ -42,12 +42,6 @@ public class GuiGasCentrifuge extends GuiMachine<TileGasCentrifuge> {
 
         fontRenderer.drawString(LanguageUtility.transelate("gui.status") + ": " + LanguageUtility.transelate(displayText), 70, 50, 0x404040);
 
-        final List<String> list = LanguageUtility.splitStringPerWord(LanguageUtility.transelate(tile.getBlockType().getTranslationKey() + "." + tile.getType().ordinal() + ".text"), 4);
-
-        for (int i = 0; i < list.size(); i++) {
-            fontRenderer.drawString(list.get(i), (xSize / 2) - 80, 85 + i * 9, 0x404040);
-        }
-
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }
 }

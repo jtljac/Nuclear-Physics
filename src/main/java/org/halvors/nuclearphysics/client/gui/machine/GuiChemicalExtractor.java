@@ -10,9 +10,6 @@ import org.halvors.nuclearphysics.client.gui.component.GuiSlot;
 import org.halvors.nuclearphysics.client.gui.component.GuiSlot.EnumSlotType;
 import org.halvors.nuclearphysics.common.container.machine.ContainerChemicalExtractor;
 import org.halvors.nuclearphysics.common.tile.machine.TileChemicalExtractor;
-import org.halvors.nuclearphysics.common.utility.LanguageUtility;
-
-import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class GuiChemicalExtractor extends GuiMachine<TileChemicalExtractor> {
@@ -33,12 +30,6 @@ public class GuiChemicalExtractor extends GuiMachine<TileChemicalExtractor> {
 
     @Override
     protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY) {
-        final List<String> list = LanguageUtility.splitStringPerWord(LanguageUtility.transelate(tile.getBlockType().getTranslationKey() + "." + tile.getType().ordinal() + ".text"), 4);
-
-        for (int i = 0; i < list.size(); i++) {
-            fontRenderer.drawString(list.get(i), (xSize / 2) - 80, 85 + i * 9, 0x404040);
-        }
-
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }
 }

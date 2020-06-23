@@ -14,11 +14,11 @@ import org.halvors.nuclearphysics.common.utility.ResourceUtility;
 @SideOnly(Side.CLIENT)
 public class GuiQuantumAssembler extends GuiMachine<TileQuantumAssembler> {
     public GuiQuantumAssembler(final InventoryPlayer inventoryPlayer, final TileQuantumAssembler tile) {
-        super(tile, new ContainerQuantumAssembler(inventoryPlayer, tile));
+        super(tile, new ContainerQuantumAssembler(inventoryPlayer, tile), 60);
 
         defaultResource = ResourceUtility.getResource(EnumResource.GUI, "quantum_assembler.png");
         ySize = 230;
-        titleOffset = -7;
+        titleOffset = -30;
 
         components.add(new GuiSlot(this, 79, 39));
         components.add(new GuiSlot(this, 52, 55));

@@ -17,7 +17,7 @@ import java.util.List;
 public class GuiMachine<T extends TileMachine> extends GuiComponentContainer<T> {
     protected int titleOffset;
 
-    public GuiMachine(final T tile, final Container container) {
+    public GuiMachine(final T tile, final Container container, final int sideOffset) {
         super(tile, container);
         components.add(new GuiEnergyInfo(() -> {
             final List<String> list = new ArrayList<>();
@@ -32,14 +32,18 @@ public class GuiMachine<T extends TileMachine> extends GuiComponentContainer<T> 
             }
 
             return list;
-        }, this, -26, 183));
-        components.add(new GuiRedstoneControl(tile, this, 176, 183));
+        }, this, -26, 142 + sideOffset));
+        components.add(new GuiRedstoneControl(tile, this, 176, 142 + sideOffset));
+    }
+
+    public GuiMachine(final T tile, final Container container) {
+        this(tile, container, 0);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        fontRenderer.drawString(tile.getName(), (xSize / 2) - (fontRenderer.getStringWidth(tile.getName()) / 2), (ySize / 2) - 102 + titleOffset, 0x404040);
-        fontRenderer.drawString(LanguageUtility.transelate("container.inventory"), (xSize / 2) - 80, (ySize - 96) + 2, 0x404040);
+        fontRenderer.drawString(tile.getName(), (xSize / 2) - (fontRenderer.getStringWidth(tile.getName()) / 2), (ySize / 2) - 80 + titleOffset, 0x404040);
+        fontRenderer.drawString(LanguageUtility.transelate("container.inventory"), (xSize / 2) - 80, (ySize - 92), 0x404040);
 
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
     }

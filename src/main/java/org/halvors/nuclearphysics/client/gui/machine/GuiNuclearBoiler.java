@@ -29,15 +29,4 @@ public class GuiNuclearBoiler extends GuiMachine<TileNuclearBoiler> {
         components.add(new GuiSlot(EnumSlotType.LIQUID, this, 134, 18));
         components.add(new GuiSlot(EnumSlotType.LIQUID, this, 134, 49));
     }
-
-    @Override
-    public void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY) {
-        final List<String> list = LanguageUtility.splitStringPerWord(LanguageUtility.transelate(tile.getBlockType().getTranslationKey() + "." + tile.getType().ordinal() + ".text"), 4);
-
-        for (int i = 0; i < list.size(); i++) {
-            fontRenderer.drawString(list.get(i), (xSize / 2) - 80, 85 + i * 9, 0x404040);
-        }
-
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-    }
 }

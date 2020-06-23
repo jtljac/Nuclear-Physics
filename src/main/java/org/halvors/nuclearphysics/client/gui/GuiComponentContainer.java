@@ -31,7 +31,7 @@ public class GuiComponentContainer<T extends TileEntity> extends GuiContainer im
 
         this.tile = tile;
 
-        ySize = 217;
+        ySize = 170;
     }
 
     @Override

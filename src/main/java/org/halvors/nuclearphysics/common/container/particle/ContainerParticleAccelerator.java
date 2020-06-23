@@ -9,6 +9,10 @@ public class ContainerParticleAccelerator extends ContainerBase<TileParticleAcce
     public ContainerParticleAccelerator(final InventoryPlayer inventoryPlayer, final TileParticleAccelerator tile) {
         super(4, inventoryPlayer, tile);
 
+
+        yInventoryDisplacement = 135;
+        yHotBarDisplacement = 193;
+
         // Inputs
         addSlotToContainer(new SlotItemHandler(tile.getInventoryInMatter(), 0, 142, 26));
         addSlotToContainer(new SlotItemHandler(tile.getInventoryInCells(), 0, 142, 51));

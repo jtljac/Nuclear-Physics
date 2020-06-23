@@ -33,7 +33,7 @@ public class GuiComponentScreen extends GuiScreen implements IGuiWrapper {
     protected int xSize = 176;
 
     /** The Y size of the inventory window in pixels. */
-    protected int ySize = 217;
+    protected int ySize = 170;
 
     public GuiComponentScreen() {
 
@@ -49,8 +49,6 @@ public class GuiComponentScreen extends GuiScreen implements IGuiWrapper {
 
     @Override
     public void drawScreen(final int mouseX, final int mouseY, final float partialTick) {
-        drawDefaultBackground();
-
         GlStateManager.color(1, 1, 1, 1);
 
         drawGuiScreenBackgroundLayer(partialTick, mouseX, mouseY);
