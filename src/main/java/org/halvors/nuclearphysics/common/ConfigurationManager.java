@@ -62,7 +62,7 @@ public class ConfigurationManager {
         General.fromJoules = configuration.get(Configuration.CATEGORY_GENERAL, "ForgeFromJoules", 0.4).getDouble(); // Conversion multiplier from Joules to Forge Energy (Joules * ForgeFromJoules = FE)
 
         General.enableAntimatterPower = configuration.get(Configuration.CATEGORY_GENERAL, "enableAntimatterPower", true).getBoolean();
-        General.enableBoilingOfWaterBlocks = configuration.get(Configuration.CATEGORY_GENERAL, "enableBoilingOfWaterBlocks", true).getBoolean();
+        General.enableBoilingOfWaterBlocks = configuration.get(Configuration.CATEGORY_GENERAL, "enableBoilingOfWaterBlocks", false).getBoolean();
         General.enableOreRegeneration = configuration.get(Configuration.CATEGORY_GENERAL, "enableOreRegeneration", true).getBoolean();
         General.enableRadiationRoisoning = configuration.get(Configuration.CATEGORY_GENERAL, "enableRadiationRoisoning", true).getBoolean();
 
