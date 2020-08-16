@@ -10,6 +10,6 @@ import javax.annotation.Nonnull;
 public class JEIIntegration implements IModPlugin {
     @Override
     public void register(@Nonnull IModRegistry modRegistry) {
-        modRegistry.addRecipeCategoryCraftingItem()
+        // modRegistry.addRecipeCategoryCraftingItem();
     }
 }
