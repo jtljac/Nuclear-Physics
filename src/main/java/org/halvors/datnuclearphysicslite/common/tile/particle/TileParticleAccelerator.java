@@ -266,15 +266,18 @@ public class TileParticleAccelerator extends TileMachine implements IElectromagn
                     if (entityParticle.isDead) {
                         // On particle collision we roll the dice to see if dark-matter is generated.
                         if (entityParticle.didCollide()) {
-                            if (world.rand.nextFloat() <= 1 ) {// General.darkMatterSpawnChance) {
+                            if (world.rand.nextFloat() <= General.darkMatterSpawnChance) {
                                 ItemStack itemStack = inventoryOut.getStackInSlot(1);
-                                if (!itemStack.isEmpty()) {
-                                    // If the output slot is not empty we must increase stack size
-                                    if (itemStack.getItem() == ModItems.itemDarkMatterCell && itemStack.getCount() < itemStack.getMaxStackSize()) {
-                                        itemStack.setCount(itemStack.getCount() + 1);
+                                final ItemStack itemStackEmptyCell = inventoryInCells.getStackInSlot(0);
+                                if (OreDictionaryHelper.isEmptyCell(itemStackEmptyCell) && itemStackEmptyCell.getCount() > 0) {
+                                    if (!itemStack.isEmpty()) {
+                                        // If the output slot is not empty we must increase stack size
+                                        if (itemStack.getItem() == ModItems.itemDarkMatterCell && itemStack.getCount() < itemStack.getMaxStackSize()) {
+                                            itemStack.setCount(itemStack.getCount() + 1);
+                                        }
+                                    } else {
+                                        inventoryOut.setStackInSlot(1, new ItemStack(ModItems.itemDarkMatterCell));
                                     }
-                                } else {
-                                    inventoryOut.setStackInSlot(1, new ItemStack(ModItems.itemDarkMatterCell));
                                 }
                             }
                         }
