@@ -24,6 +24,7 @@ public class ConfigurationManager {
         public static int antimatterParticleDensity;
         public static double darkMatterSpawnChance;
 
+        public static double quantumAssemblerEntropyChance;
         public static boolean allowGeneratedQuantumAssemblerRecipes;
     }
 
@@ -49,6 +50,7 @@ public class ConfigurationManager {
 
         General.darkMatterSpawnChance = configuration.get(Configuration.CATEGORY_GENERAL, "darkMatterSpawnChance", 0.2).getDouble();
 
+        General.quantumAssemblerEntropyChance = configuration.get(Configuration.CATEGORY_GENERAL, "quantumAssemblerEntropyChance", 0.008).getDouble();
         General.allowGeneratedQuantumAssemblerRecipes = configuration.get(Configuration.CATEGORY_GENERAL, "allowGeneratedQuantumAssemblerRecipes", true).getBoolean();
 
         // TODO: Testing new options, and fix category.
@@ -76,6 +78,7 @@ public class ConfigurationManager {
 
         General.darkMatterSpawnChance = dataStream.readDouble();
 
+        General.quantumAssemblerEntropyChance = dataStream.readDouble();
         General.allowGeneratedQuantumAssemblerRecipes = dataStream.readBoolean();
 
         // TODO: Testing new options.
@@ -99,6 +102,7 @@ public class ConfigurationManager {
         objects.add(General.fulminationOutputMultiplier);
         objects.add(General.darkMatterSpawnChance);
 
+        objects.add(General.quantumAssemblerEntropyChance);
         objects.add(General.allowGeneratedQuantumAssemblerRecipes);
 
         // TODO: Testing new options.
