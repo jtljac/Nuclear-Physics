@@ -4,8 +4,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import org.halvors.datnuclearphysicslite.common.network.PacketHandler;
-import org.halvors.datnuclearphysicslite.common.network.packet.PacketConfiguration;
-import org.halvors.datnuclearphysicslite.common.network.packet.PacketConfiguration.PacketConfigurationMessage;
 import org.halvors.datnuclearphysicslite.common.network.packet.PacketRedstoneControl;
 import org.halvors.datnuclearphysicslite.common.network.packet.PacketRedstoneControl.PacketRedstoneControlMessage;
 import org.halvors.datnuclearphysicslite.common.network.packet.PacketTileEntity;
@@ -16,7 +14,6 @@ public class ModMessages {
     private static int messageId = 1;
 
     public static void registerMessages() {
-        registerMessage(PacketConfigurationMessage.class, PacketConfiguration.class, Side.CLIENT);
         registerMessage(PacketTileEntityMessage.class, PacketTileEntity.class, Side.CLIENT);
         registerMessage(PacketRedstoneControlMessage.class, PacketRedstoneControl.class, Side.SERVER);
     }
