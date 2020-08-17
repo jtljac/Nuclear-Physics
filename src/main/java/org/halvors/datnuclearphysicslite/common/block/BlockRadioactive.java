@@ -13,7 +13,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.halvors.datnuclearphysicslite.client.utility.RenderUtility;
-import org.halvors.datnuclearphysicslite.common.ConfigurationManager.General;
 import org.halvors.datnuclearphysicslite.common.init.ModPotions;
 import org.halvors.datnuclearphysicslite.common.type.EnumParticleType;
 
@@ -39,7 +38,7 @@ public class BlockRadioactive extends BlockBase {
     @Override
     @SideOnly(Side.CLIENT)
     public void randomDisplayTick(final IBlockState state, final World world, final BlockPos pos, final Random random) {
-        if ((spawnParticle || General.allowRadioactiveOres) && Minecraft.getMinecraft().gameSettings.particleSetting == 0) {
+        if ((spawnParticle) && Minecraft.getMinecraft().gameSettings.particleSetting == 0) {
             int radius = 3;
 
             for (int i = 0; i < 2; i++) {
@@ -55,7 +54,7 @@ public class BlockRadioactive extends BlockBase {
     @Override
     public void updateTick(final World world, final BlockPos pos, final IBlockState state, final Random random) {
         if (!world.isRemote) {
-            if (isRandomlyRadioactive || General.allowRadioactiveOres) {
+            if (isRandomlyRadioactive) {
                 final AxisAlignedBB bounds = new AxisAlignedBB(pos.getX() - radius, pos.getY() - radius, pos.getZ() - radius, pos.getX() + radius, pos.getY() + radius, pos.getZ() + radius);
                 final List<EntityLivingBase> entitiesNearby = world.getEntitiesWithinAABB(EntityLivingBase.class, bounds);
 
@@ -86,7 +85,7 @@ public class BlockRadioactive extends BlockBase {
      */
     @Override
     public void onEntityWalk(final World world, final BlockPos pos, final Entity entity) {
-        if (entity instanceof EntityLivingBase && (canWalkPoison || General.allowRadioactiveOres)) {
+        if (entity instanceof EntityLivingBase && (canWalkPoison)) {
             ModPotions.poisonRadiation.poisonEntity((EntityLivingBase) entity);
         }
     }

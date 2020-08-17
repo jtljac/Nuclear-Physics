@@ -17,10 +17,6 @@ public class UnitDisplay {
         return getDisplayShort(energy, unit);
     }
 
-    public static String getTemperatureDisplay(final double temperature) {
-        return getDisplayShort(temperature, General.temperatureUnit);
-    }
-
     /**
      * Displays the unit as text. Does handle negative numbers, and will place a negative sign in
      * front of the output string showing this. Use string.replace to remove the negative sign if
