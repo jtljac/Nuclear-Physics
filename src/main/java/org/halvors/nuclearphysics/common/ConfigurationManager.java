@@ -41,6 +41,9 @@ public class ConfigurationManager {
         //public static boolean allowTurbineStacking = true;
         //public static boolean allowAlternateRecipes = true;
         //public static boolean allowIC2UraniumCompression = true;
+
+
+        public static double quantumAssemblerEntropyChance;
         public static boolean allowGeneratedQuantumAssemblerRecipes;
 
 
@@ -84,6 +87,8 @@ public class ConfigurationManager {
         //General.allowTurbineStacking = configuration.get(Configuration.CATEGORY_GENERAL, "allowTurbineStacking", true).getBoolean();
         //General.allowAlternateRecipes = configuration.get(Configuration.CATEGORY_GENERAL, "allowAlternateRecipes", true).getBoolean();
         //General.allowIC2UraniumCompression = configuration.get(Configuration.CATEGORY_GENERAL, "allowIC2UraniumCompression", true).getBoolean();
+
+        General.quantumAssemblerEntropyChance = configuration.get(Configuration.CATEGORY_GENERAL, "quantumAssemblerEntropyChance", 0.008).getDouble();
         General.allowGeneratedQuantumAssemblerRecipes = configuration.get(Configuration.CATEGORY_GENERAL, "allowGeneratedQuantumAssemblerRecipes", true).getBoolean();
 
         // TODO: Testing new options, and fix category.
@@ -127,6 +132,8 @@ public class ConfigurationManager {
         //General.allowTurbineStacking = dataStream.readBoolean();
         //General.allowAlternateRecipes = dataStream.readBoolean();
         //General.allowIC2UraniumCompression = dataStream.readBoolean();
+
+        General.quantumAssemblerEntropyChance = dataStream.readDouble();
         General.allowGeneratedQuantumAssemblerRecipes = dataStream.readBoolean();
 
         // TODO: Testing new options.
@@ -166,6 +173,8 @@ public class ConfigurationManager {
         //objects.add(General.allowTurbineStacking);
         //objects.add(General.allowAlternateRecipes);
         //objects.add(General.allowIC2UraniumCompression);
+
+        objects.add(General.quantumAssemblerEntropyChance);
         objects.add(General.allowGeneratedQuantumAssemblerRecipes);
 
         // TODO: Testing new options.

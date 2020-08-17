@@ -10,6 +10,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.halvors.nuclearphysics.api.recipe.QuantumAssemblerBlacklist;
+import org.halvors.nuclearphysics.common.ConfigurationManager;
 import org.halvors.nuclearphysics.common.NuclearPhysics;
 import org.halvors.nuclearphysics.common.block.states.BlockStateMachine.EnumMachine;
 import org.halvors.nuclearphysics.common.capabilities.energy.EnergyStorage;
@@ -187,9 +188,9 @@ public class TileQuantumAssembler extends TileMachine {
     }
 
     private void randomEntropy() {
-        if (operatingTicks % 500 == 0){
+        if (operatingTicks % 20 == 0) {
             Random randomat = new Random();
-            if (randomat.nextFloat() < 0.1f){
+            if (randomat.nextDouble() < ConfigurationManager.General.quantumAssemblerEntropyChance) {
                 InventoryUtility.decrStackSize(inventory, randomat.nextInt(6));
             }
 
