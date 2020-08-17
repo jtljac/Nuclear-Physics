@@ -3,7 +3,6 @@ package org.halvors.nuclearphysics.common.tile.particle;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -24,7 +23,6 @@ import org.halvors.nuclearphysics.common.capabilities.energy.EnergyStorage;
 import org.halvors.nuclearphysics.common.entity.EntityParticle;
 import org.halvors.nuclearphysics.common.init.ModItems;
 import org.halvors.nuclearphysics.common.init.ModSoundEvents;
-import org.halvors.nuclearphysics.common.item.particle.ItemAntimatterCell;
 import org.halvors.nuclearphysics.common.network.packet.PacketTileEntity;
 import org.halvors.nuclearphysics.common.tile.TileMachine;
 import org.halvors.nuclearphysics.common.utility.EnergyUtility;
@@ -268,15 +266,18 @@ public class TileParticleAccelerator extends TileMachine implements IElectromagn
                     if (entityParticle.isDead) {
                         // On particle collision we roll the dice to see if dark-matter is generated.
                         if (entityParticle.didCollide()) {
-                            if (world.rand.nextFloat() <= 1 ) {// General.darkMatterSpawnChance) {
+                            if (world.rand.nextFloat() <= General.darkMatterSpawnChance) {
                                 ItemStack itemStack = inventoryOut.getStackInSlot(1);
-                                if (!itemStack.isEmpty()) {
-                                    // If the output slot is not empty we must increase stack size
-                                    if (itemStack.getItem() == ModItems.itemDarkMatterCell && itemStack.getCount() < itemStack.getMaxStackSize()) {
-                                        itemStack.setCount(itemStack.getCount() + 1);
+                                final ItemStack itemStackEmptyCell = inventoryInCells.getStackInSlot(0);
+                                if (OreDictionaryHelper.isEmptyCell(itemStackEmptyCell) && itemStackEmptyCell.getCount() > 0) {
+                                    if (!itemStack.isEmpty()) {
+                                        // If the output slot is not empty we must increase stack size
+                                        if (itemStack.getItem() == ModItems.itemDarkMatterCell && itemStack.getCount() < itemStack.getMaxStackSize()) {
+                                            itemStack.setCount(itemStack.getCount() + 1);
+                                        }
+                                    } else {
+                                        inventoryOut.setStackInSlot(1, new ItemStack(ModItems.itemDarkMatterCell));
                                     }
-                                } else {
-                                    inventoryOut.setStackInSlot(1, new ItemStack(ModItems.itemDarkMatterCell));
                                 }
                             }
                         }
@@ -295,7 +296,6 @@ public class TileParticleAccelerator extends TileMachine implements IElectromagn
                         entityParticle.setDead();
                         entityParticle = null;
                     }
-
 
 
                     // Plays sound of particle accelerating past the speed based on total velocity at the time of anti-matter creation.
