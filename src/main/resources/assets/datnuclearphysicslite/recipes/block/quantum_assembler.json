@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "datnuclearphysicslite:machine",
+    "data": 1
+  },
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "CCC",
+    "PMP",
+    "PPP"
+  ],
+  "key": {
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "circuitElite"
+    },
+    "M": {
+      "item": "datnuclearphysicslite:motor"
+    },
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateSteel"
+    }
+  }
+}

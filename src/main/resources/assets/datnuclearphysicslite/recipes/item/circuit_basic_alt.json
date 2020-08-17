@@ -1,0 +1,23 @@
+{
+  "result": {
+    "item": "datnuclearphysicslite:circuit_basic"
+  },
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "WRW",
+    "RPR",
+    "WRW"
+  ],
+  "key": {
+    "W": {
+      "item": "datnuclearphysicslite:copper_wire"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "P": {
+      "type": "forge:ore_dict",
+      "ore": "plateSteel"
+    }
+  }
+}

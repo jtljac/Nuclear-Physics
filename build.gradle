@@ -52,8 +52,8 @@ configFile.withReader {
 }
 
 version = config.minecraft_version + "-" + config.mod_version
-group = "org.halvors.nuclearphysics"
-archivesBaseName = "nuclearphysics"
+group = "org.halvors.datnuclearphysicslite"
+archivesBaseName = "datnuclearphysicslite"
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 

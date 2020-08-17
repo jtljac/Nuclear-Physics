@@ -1,0 +1,38 @@
+{
+  "block.accelerator": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "datnuclearphysicslite:accelerator",
+        "stream": false
+      }
+    ]
+  },
+  "block.antimatter": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "datnuclearphysicslite:antimatter",
+        "stream": false
+      }
+    ]
+  },
+  "block.assembler": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "datnuclearphysicslite:assembler",
+        "stream": false
+      }
+    ]
+  },
+  "block.siren": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "datnuclearphysicslite:siren",
+        "stream": false
+      }
+    ]
+  }
+}

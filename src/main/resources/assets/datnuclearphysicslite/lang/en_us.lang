@@ -1,0 +1,120 @@
+// Creative tab
+itemGroup.datnuclearphysicslite=Nuclear Physics
+
+// Blocks
+tile.datnuclearphysicslite.electromagnet.0.name=Electromagnet
+tile.datnuclearphysicslite.electromagnet.0.tooltip=Creates an electromagnetic field preventing plasma and particles from getting near.
+tile.datnuclearphysicslite.electromagnet.1.name=Electromagnetic Glass
+tile.datnuclearphysicslite.electromagnet.1.tooltip=Creates an electromagnetic field preventing plasma and particles from getting near.
+tile.datnuclearphysicslite.fulmination_generator.name=Fulmination Generator
+tile.datnuclearphysicslite.fulmination_generator.tooltip=Transforms the kinetic energy from explosions into electrical energy.
+tile.datnuclearphysicslite.machine.0.name=Particle Accelerator
+tile.datnuclearphysicslite.machine.0.tooltip=Accelerates particles and creates antimatter and dark matter.
+tile.datnuclearphysicslite.machine.1.name=Quantum Assembler
+tile.datnuclearphysicslite.machine.1.tooltip=Reassembles Dark Matter atoms into usable materials.
+tile.datnuclearphysicslite.radioactive_grass.name=Radioactive Waste
+tile.datnuclearphysicslite.radioactive_grass.tooltip=Generates harmful radiation and spreads around the world, mutating organisms.
+tile.datnuclearphysicslite.siren.name=Siren
+tile.datnuclearphysicslite.siren.tooltip=Creates an alarm with customizable pitch and volume with a Redstone signal.
+
+// Items
+item.datnuclearphysicslite.wrench.name=Wrench
+item.datnuclearphysicslite.copper_wire.name=Copper Wire
+item.datnuclearphysicslite.motor.name=Motor
+item.datnuclearphysicslite.circuit_basic.name=Basic Circuit
+item.datnuclearphysicslite.circuit_advanced.name=Advanced Circuit
+item.datnuclearphysicslite.circuit_elite.name=Elite Circuit
+item.datnuclearphysicslite.plate_bronze.name=Bronze Plate
+item.datnuclearphysicslite.plate_steel.name=Steel Plate
+item.datnuclearphysicslite.cell.name=Cell
+item.datnuclearphysicslite.cell.tooltip=Contains: %d
+item.datnuclearphysicslite.darkmatter_cell.name=Dark Matter
+item.datnuclearphysicslite.antimatter_cell.0.name=Antimatter
+item.datnuclearphysicslite.antimatter_cell.0.tooltip=125 Milligrams
+item.datnuclearphysicslite.antimatter_cell.1.name=Antimatter
+item.datnuclearphysicslite.antimatter_cell.1.tooltip=1 Gram
+item.datnuclearphysicslite.hazmat_mask.name=Hazmat Mask
+item.datnuclearphysicslite.hazmat_body.name=Hazmat Body
+item.datnuclearphysicslite.hazmat_leggings.name=Hazmat Leggings
+item.datnuclearphysicslite.hazmat_boots.name=Hazmat Boots
+
+// Tooltip
+tooltip.noFluid=No fluid
+tooltip.energy=Energy
+tooltip.inputSlot=Input slot
+tooltip.state=State
+tooltip.empty=Empty
+tooltip.wrench=Wrench
+tooltip.rotate=Rotate
+tooltip.trackingCoordinate=Tracking coordinate
+tooltip.clearedTrackingCoordinate=Cleared tracking coordinate
+tooltip.notTrackingTemperature=Not tracking temperature
+
+tooltip.datnuclearphysicslite.noShift=Hold %dshift %dfor more information
+
+// Gui
+gui.buffer=Buffer
+gui.control.disabled=Disabled
+gui.control.high=High
+gui.control.low=Low
+gui.control.pulse=Pulse
+gui.mode=Mode
+gui.needed=Needed
+gui.remaining=Remaining
+gui.temperature=Temperature
+gui.unit=Unit
+gui.using=Using
+gui.process=Process
+gui.processing=Processing
+gui.ready=Ready
+gui.idle=Idle
+gui.progress=Progress
+gui.status=Status
+gui.failedToEmitTryRotating=Failed to emit, try rotating
+gui.accelerating=Accelerating
+gui.velocity=Velocity
+gui.storedAntimatter=Stored antimatter
+gui.energyUsed=Energy used
+gui.facing=Facing
+gui.radius=Radius
+
+gui.configuration.category.general=General
+gui.configuration.category.general.tooltip=General settings
+gui.configuration.category.machine=Machine
+gui.configuration.category.machine.tooltip=Settings regarding enabling and disabling of specific machines
+gui.configuration.category.integration=Integration
+gui.configuration.category.integration.tooltip=Settings regarding enabling and disabling of specific mod integrations
+gui.configuration.category.client=Client
+gui.configuration.category.client.tooltip=Client-specific settings
+
+// Potion
+effect.radiation=Radiation
+
+// Death
+death.attack.radiation=%1$s died from radiation.
+
+// Schematic
+schematic.accelerator.name=Particle Accelerator
+schematic.breeding_reactor.name=Breeding Reactor
+schematic.fission_reactor.name=Fission Reactor
+schematic.fusion_reactor.name=Fusion Reactor
+
+// Color
+color.black=Black
+color.darkBlue=Dark Blue
+color.darkGreen=Dark Green
+color.darkAqua=Dark Aqua
+color.darkRed=Dark Red
+color.purple=Purple
+color.orange=Orange
+color.grey=Grey
+color.darkGrey=Dark Grey
+color.indigo=Indigo
+color.brightGreen=Bright Green
+color.aqua=Aqua
+color.red=Red
+color.pink=Pink
+color.yellow=Yellow
+color.white=White
+color.brown=Brown
+color.brightPink=Bright Pink

@@ -1,11 +1,11 @@
 [
 	{
-  		"modid": "datnuclearphysics",
+  		"modid": "datnuclearphysicslite",
   		"name": "Nuclear Physics",
-  		"description": "Nuclear Physics is a mod that brings in realistic, world-based physics into Minecraft. Always though electricity generation is a burden? That's why we are here to bring you nuclear power to solve all your  problems. With our fission reactor, fusion reactor, you won't be lacking electricity ever again!",
+  		"description": "A lite version of Dat Nuclear Physics, stripping out all but the particle accelerator",
   		"version": "${version}",
   		"mcversion": "${minecraft_version}",
-  		"url": "https://minecraft.curseforge.com/projects/nuclear-physics",
+  		"url": "https://minecraft.curseforge.com/projects/dat-nuclear-physics-lite",
   		"updateUrl": "",
   		"authorList": [ "halvors", "jtljac" ],
   		"credits": "Calclavia, Darkguardsman, CyanideX, Archadia",

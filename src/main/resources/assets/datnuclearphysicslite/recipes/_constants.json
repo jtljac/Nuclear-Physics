@@ -1,0 +1,16 @@
+[
+  {
+    "name" : "particle_accelerator",
+    "ingredient" : {
+      "item": "datnuclearphysicslite:machine",
+      "data": 3
+    }
+  },
+  {
+    "name" : "quantum_assembler",
+    "ingredient" : {
+      "item": "datnuclearphysicslite:machine",
+      "data": 5
+    }
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "result": {
+    "item": "datnuclearphysicslite:motor"
+  },
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "WSW",
+    "SIS",
+    "WSW"
+  ],
+  "key": {
+    "W": {
+      "item": "datnuclearphysicslite:copper_wire"
+    },
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "ingotSteel"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

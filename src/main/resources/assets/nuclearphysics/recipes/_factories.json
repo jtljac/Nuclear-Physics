@@ -1,5 +1,0 @@
-{
-  "recipes": {
-    "shapeless_cell_recipe": "org.halvors.nuclearphysics.common.crafting.recipe.ShapelessCellRecipe$Factory"
-  }
-}

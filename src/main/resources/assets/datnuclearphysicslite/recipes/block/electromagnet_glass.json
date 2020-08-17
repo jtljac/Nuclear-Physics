@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "datnuclearphysicslite:electromagnet",
+    "data": 1
+  },
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "item": "datnuclearphysicslite:electromagnet",
+      "data": 0
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "blockGlass"
+    }
+  ]
+}
