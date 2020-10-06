@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import org.halvors.datnuclearphysicslite.common.NuclearPhysics;
-import org.halvors.datnuclearphysicslite.common.Reference;
 import org.halvors.datnuclearphysicslite.common.type.Range;
 import org.halvors.datnuclearphysicslite.common.utility.PlayerUtility;
 
@@ -30,7 +29,7 @@ import java.util.Set;
  * @author halvors
  */
 public class PacketHandler {
-	public static final SimpleNetworkWrapper networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(Reference.ID);
+	public static final SimpleNetworkWrapper networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("datnuclearphysicsL");
 
 	public void sendTo(final IMessage message, final EntityPlayerMP player) {
 		networkWrapper.sendTo(message, player);
